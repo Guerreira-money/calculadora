@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>calculadora</title>
+    <link rel="stylesheet" type="text/css" href="css/calculadora.css">
+</head>
+
+<body>
+    <form>
+        <table class="calc-table">
+            <tr>
+                <td id="calc-fundo-display" colspan="5"></td>
+            </tr>
+            <tr class="row">
+                <td class="calc-td" onclick="percentage()">%</td>
+                <td class="calc-td" onclick="sqrt()">√</td>
+                <td class="calc-td" onclick="power()">a<sup>b</sup></td>
+                <td class="calc-td" onclick="reciprocal()">1/x</td>
+                <td class="calc-td" onclick="memoryClear()">MC</td>
+            </tr>
+            <tr class="row">
+                <td class="calc-td" onclick="clearEntry()">CE</td>
+                <td class="calc-td" onclick="limparConteudo()">C</td>
+                <td class="calc-td" onclick="backspace()"><svg xmlns="http://www.w3.org/2000/svg"
+                        width="16" height="16" fill="currentColor" class="bi bi-backspace" viewBox="0 0 16 16">
+                        <path
+                            d="M5.83 5.146a.5.5 0 0 0 0 .708L7.975 8l-2.147 2.146a.5.5 0 0 0 .707.708l2.147-2.147 2.146 2.147a.5.5 0 0 0 .707-.708L9.39 8l2.146-2.146a.5.5 0 0 0-.707-.708L8.683 7.293 6.536 5.146a.5.5 0 0 0-.707 0z" />
+                        <path
+                            d="M13.683 1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-7.08a2 2 0 0 1-1.519-.698L.241 8.65a1 1 0 0 1 0-1.302L5.084 1.7A2 2 0 0 1 6.603 1h7.08zm-7.08 1a1 1 0 0 0-.76.35L1 8l4.844 5.65a1 1 0 0 0 .759.35h7.08a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-7.08z" />
+                    </svg></td>
+                <td class="calc-td" onclick="insert('/')">/</td>
+                <td class="calc-td" onclick="memoryRecall()">MR</td>
+            </tr>
+            <tr class="row">
+                <td class="calc-td" onclick="insert('7')">7</td>
+                <td class="calc-td" onclick="insert('8')">8</td>
+                <td class="calc-td" onclick="insert('9')">9</td>
+                <td class="calc-td" onclick="insert('*')">*</td>
+                <td class="calc-td" onclick="memoryAdd()">M+</td>
+            </tr>
+            <tr class="row">
+                <td class="calc-td" onclick="insert('4')">4</td>
+                <td class="calc-td" onclick="insert('5')">5</td>
+                <td class="calc-td" onclick="insert('6')">6</td>
+                <td class="calc-td" onclick="insert('-')">-</td>
+                <td class="calc-td" onclick="memorySubtract()">M-</td>
+            </tr>
+            <tr class="row">
+                <td class="calc-td" onclick="insert('1')">1</td>
+                <td class="calc-td" onclick="insert('2')">2</td>
+                <td class="calc-td" onclick="insert('3')">3</td>
+                <td class="calc-td" onclick="insert('+')">+</td>
+                <td class="calc-td" onclick="memoryStore()">MS</td>
+            </tr>
+            <tr class="row">
+                <td class="calc-td" onclick="toggleSign()">+-</td>
+                <td class="calc-td" onclick="insert('0')">0</td>
+                <td class="calc-td" onclick="insert('.')">,</td>
+                <td class="calc-td" onclick="calcular()">=</td>
+                <td class="calc-td" onclick="memoryShow()">M</td>
+            </tr>
+        </table>
+    </form>
+    <script>
+        let memory = 0;
+
+        function insert(numero) {
+            let display = document.getElementById('calc-fundo-display');
+            display.innerHTML = display.innerHTML + numero;
+        }
+
+        function power() {
+            let display = document.getElementById('calc-fundo-display');
+            let content = display.innerHTML;
+            if (content.length > 0) {
+                display.innerHTML = content + '^';
+            }
+        }
+
+        function calcular() {
+            let display = document.getElementById('calc-fundo-display');
+            let content = display.innerHTML.replace(',', '.');
+
+            // Substitui a notação de potência ^ por **
+            content = content.replace(/(\d+)\^(\d+)/g, '$1**$2');
+
+            let resultado = eval(content);
+            display.innerHTML = resultado.toString().replace('.', ',');
+        }
+
+        function limparConteudo() {
+            document.getElementById('calc-fundo-display').innerHTML = "";
+        }
+
+        function backspace() {
+            let display = document.getElementById('calc-fundo-display');
+            display.innerHTML = display.innerHTML.substring(0, display.innerHTML.length - 1);
+        }
+
+        function clearEntry() {
+            document.getElementById('calc-fundo-display').innerHTML = "0";
+        }
+
+        function sqrt() {
+            let display = document.getElementById('calc-fundo-display');
+            let content = display.innerHTML;
+            let resultado = Math.sqrt(parseFloat(content.replace(',', '.')));
+            display.innerHTML = resultado.toString().replace('.', ',');
+        }
+
+        function reciprocal() {
+            let display = document.getElementById('calc-fundo-display');
+            let content = display.innerHTML;
+            let resultado = 1 / parseFloat(content.replace(',', '.'));
+            display.innerHTML = resultado.toString().replace('.', ',');
+        }
+
+        function percentage() {
+            let display = document.getElementById('calc-fundo-display');
+            let content = display.innerHTML;
+
+            if (content.includes('+') || content.includes('-') || content.includes('*') || content.includes('/')) {
+                let operators = ['+', '-', '*', '/'];
+                let lastOperatorIndex = -1;
+                let lastOperator = '';
+
+                for (let operator of operators) {
+                    let index = content.lastIndexOf(operator);
+                    if (index > lastOperatorIndex) {
+                        lastOperatorIndex = index;
+                        lastOperator = operator;
+                    }
+                }
+
+                let num1 = parseFloat(content.substring(0, lastOperatorIndex).replace(',', '.'));
+                let num2 = parseFloat(content.substring(lastOperatorIndex + 1).replace(',', '.')) / 100;
+                let result = eval(num1 + lastOperator + (num1 * num2));
+                display.innerHTML = result.toString().replace('.', ',');
+            } else {
+                let resultado = parseFloat(content.replace(',', '.')) / 100;
+                display.innerHTML = resultado.toString().replace('.', ',');
+            }
+        }
+
+        function memoryClear() {
+            memory = 0;
+        }
+
+        function memoryRecall() {
+            document.getElementById('calc-fundo-display').innerHTML = memory.toString().replace('.', ',');
+        }
+
+        function memoryAdd() {
+            let display = document.getElementById('calc-fundo-display');
+            let content = parseFloat(display.innerHTML.replace(',', '.'));
+            memory += content;
+        }
+
+        function memorySubtract() {
+            let display = document.getElementById('calc-fundo-display');
+            let content = parseFloat(display.innerHTML.replace(',', '.'));
+            memory -= content;
+        }
+
+        function memoryStore() {
+            let display = document.getElementById('calc-fundo-display');
+            memory = parseFloat(display.innerHTML.replace(',', '.'));
+        }
+
+        function memoryShow() {
+    document.getElementById('calc-fundo-display').innerHTML = memory.toString().replace('.', ',');
+}
+
+
+        function toggleSign() {
+            let display = document.getElementById('calc-fundo-display');
+            let content = display.innerHTML;
+            if (content[0] === '-') {
+                display.innerHTML = content.substring(1);
+            } else {
+                display.innerHTML = '-' + content;
+            }
+        }
+    </script>
+</body>
+
+</html>
